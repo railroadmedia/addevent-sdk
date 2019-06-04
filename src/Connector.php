@@ -21,6 +21,8 @@ class Connector
     public function __construct(Helper $helper)
     {
         $this->helper = $helper;
+
+        $this->apiToken = config('addevent-sdk.api-token');
     }
 
     /**
@@ -33,7 +35,7 @@ class Connector
         $allRetrieved = false;
 
         while (!$allRetrieved) {
-            $params = ['token' => config('add-event.api-token')];
+            $params = ['token' => $this->apiToken];
 
             $url = 'https://www.addevent.com/api/v1/me/calendars/list/?' . $this->helper->arrayToQueryString($params);
 
@@ -63,7 +65,7 @@ class Connector
     public function createCalendar($title, $description = null)
     {
         $params = [
-            'token' => config('add-event.api-token'), // required
+            'token' => $this->apiToken, // required
             'title' => $title, // required
             'description' => $description
         ];
@@ -89,7 +91,7 @@ class Connector
     public function saveCalendar($calendarId, $title, $description)
     {
         $params = [
-            'token' => config('add-event.api-token'), // required
+            'token' => $this->apiToken, // required
             'calendar-id' => $calendarId, // required
             'title' => $title, // required
             'description' => $description
@@ -115,7 +117,7 @@ class Connector
     public function deleteCalendar($calendarId, $ensureDeletedWithSecondRequest = true)
     {
         $params = [
-            'token' => config('add-event.api-token'), // required
+            'token' => $this->apiToken, // required
             'calendar_id' => $calendarId
         ];
 
@@ -168,7 +170,7 @@ class Connector
 
         while (!$allRetrieved) {
             $params = [
-                'token' => config('add-event.api-token'), // required
+                'token' => $this->apiToken, // required
                 'calendar_id' => $calendarId, // required
                 'order_by' => $orderBy,
                 'month' => $month,
@@ -234,7 +236,7 @@ class Connector
         }
 
         $params = [
-            'token' => config('add-event.api-token'),      // required
+            'token' => $this->apiToken,      // required
             'calendar_id' => $calendarId,   // required
             'title' => $title,              // required
             'timezone' => $timezone,        // required
@@ -318,7 +320,7 @@ class Connector
         }
 
         $params = [
-            'token' => config('add-event.api-token'), // required
+            'token' => $this->apiToken, // required
             'event_id' => $eventId, // required
             'title' => $title, // required
             'description' => $description,
@@ -378,7 +380,7 @@ class Connector
         }
 
         $params = [
-            'token' => config('add-event.api-token'), // required
+            'token' => $this->apiToken, // required
             'event_id' => $eventId, // required
         ];
 
