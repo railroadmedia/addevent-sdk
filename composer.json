@@ -1,0 +1,24 @@
+{
+  "name": "railroad/addevent-sdk",
+  "prefer-stable": true,
+  "require": {
+    "php": "~7",
+    "laravel/framework": "5.6.*",
+    "guzzlehttp/guzzle": "~6.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~7.0",
+    "phpunit/php-code-coverage": "~6.0",
+    "orchestra/testbench": "~3.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Railroad\\AddEventSdk\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Railroad\\AddEventSdk\\Tests\\": "tests/"
+    }
+  }
+}
