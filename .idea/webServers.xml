@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="793c128f-ad7c-4684-833b-41fafd6060c5" name="AddEventSdk" url="http://127.0.0.1">
+        <fileTransfer host="127.0.0.1" port="222" rootFolder="/app/addevent-sdk" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="222" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
