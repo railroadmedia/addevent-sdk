@@ -1,8 +1,8 @@
 <?php
 
-namespace Railroad\AddEventSdk;
+namespace Railroad\AddEventSdk\Handlers;
 
-use Carbon\Carbon;
+use Railroad\AddEventSdk\Helpers;
 
 /**
  * Class Connector
@@ -11,7 +11,7 @@ use Carbon\Carbon;
  * See AddEvent docs:
  * addevent.com/api/subscription-calendar
  */
-class CalendarsConnector extends Connector
+class CalendarsHandler extends Handler
 {
     /**
      * @return mixed

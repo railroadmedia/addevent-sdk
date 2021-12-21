@@ -4,18 +4,18 @@ namespace Railroad\AddEventSdk\Tests;
 
 use Faker\Factory;
 use Orchestra\Testbench\TestCase as BaseTestCase;
-use Railroad\AddEventSdk\CalendarsConnector;
-use Railroad\AddEventSdk\EventsConnector;
+use Railroad\AddEventSdk\Handlers\CalendarsHandler;
+use Railroad\AddEventSdk\Handlers\EventsHandler;
 
 class TestCase extends BaseTestCase
 {
     protected $apiToken;
 
-    /** @var CalendarsConnector */
-    protected $calendarsConnector;
+    /** @var CalendarsHandler */
+    protected $calendarsHandler;
 
-    /** @var EventsConnector */
-    protected $eventsConnector;
+    /** @var EventsHandler */
+    protected $eventsHandler;
 
     /** @var \Faker\Generator */
     protected $faker;
@@ -31,8 +31,8 @@ class TestCase extends BaseTestCase
 
         $this->apiToken = config('addevent-sdk.api-token');
 
-        $this->calendarsConnector = app(CalendarsConnector::class);
-        $this->eventsConnector = app(EventsConnector::class);
+        $this->calendarsHandler = app(CalendarsHandler::class);
+        $this->eventsHandler = app(EventsHandler::class);
     }
 
     protected function tearDown(): void
@@ -64,7 +64,7 @@ class TestCase extends BaseTestCase
     public function test_call_API()
     {
         try{
-            $this->calendarsConnector->get();
+            $this->calendarsHandler->get();
         }catch(\Exception $exception){
             $this->fail($exception->getMessage());
         }
@@ -82,7 +82,7 @@ class TestCase extends BaseTestCase
         }
 
         try{
-            $calendar = $this->calendarsConnector->create($title, $description);
+            $calendar = $this->calendarsHandler->create($title, $description);
         }catch(\Exception $exception){
             $this->fail('Calendar creation failed. Exception message: "' . $exception->getMessage() . '"');
         }
@@ -95,7 +95,7 @@ class TestCase extends BaseTestCase
     protected function fetchAllCalendars()
     {
         try{
-            $calendarsRetrieved = $this->calendarsConnector->list();
+            $calendarsRetrieved = $this->calendarsHandler->list();
         }catch(\Exception $exception){
             $this->fail('Calendar list failed. Exception message: "' . $exception->getMessage() . '"');
         }
@@ -129,7 +129,7 @@ class TestCase extends BaseTestCase
         foreach($calendarsToDelete as $calendarToDelete){
             if(!$calendarToDelete->main_calendar){
                 try{
-                    $this->calendarsConnector->delete($calendarToDelete->id);
+                    $this->calendarsHandler->delete($calendarToDelete->id);
                 }catch(\Exception $exception){
                     echo 'Deletion failed for calendar ' . $calendarToDelete->id . ' ("' . $calendarToDelete->title . '") with message: ' . $exception->getMessage();
                     $calendarDeletionFailed = true;

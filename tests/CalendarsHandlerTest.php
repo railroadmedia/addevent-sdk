@@ -2,7 +2,7 @@
 
 use Railroad\AddEventSdk\Tests\TestCase;
 
-class CalendarsConnectorTest extends TestCase
+class CalendarsHandlerTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -86,7 +86,9 @@ class CalendarsConnectorTest extends TestCase
 
         $countBeforeDeletion = count($this->fetchAllCalendars());
 
-        $deletionResult = $this->calendarsConnector->delete($calendar->id);
+        $result = $this->calendarsHandler->delete($calendar->id);
+
+        $this->assertTrue($result);
 
         $countAfterDeletion = count($this->fetchAllCalendars());
         $expectedCountAfterDeletion = $countBeforeDeletion - 1;

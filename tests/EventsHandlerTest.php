@@ -2,7 +2,7 @@
 
 use Railroad\AddEventSdk\Tests\TestCase;
 
-class EventsConnectorTest extends TestCase
+class EventsHandlerTest extends TestCase
 {
     protected function setUp(): void
     {

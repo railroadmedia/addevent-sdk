@@ -23,7 +23,7 @@ New structure:
         Read
         Update
         Delete
-    EventsConnector
+    EventsHandler
         Create
         Read
         Update

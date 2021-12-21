@@ -1,10 +1,11 @@
 <?php
 
-namespace Railroad\AddEventSdk;
+namespace Railroad\AddEventSdk\Handlers;
 
 use Carbon\Carbon;
+use Railroad\AddEventSdk\Helpers;
 
-class Connector
+class Handler
 {
     /**
      * @var string
@@ -37,7 +38,12 @@ class Connector
         $status = $result->meta->code;
 
         if ($status !== '200') {
-            throw new \Exception('AddEventService CURL request response status *not* 200');
+            if(isset($result->meta->error_message)){
+                $msg = 'AddEventService CURL request response status ' . $status .
+                    ' rather than expected 200. Error message: ' . '"' . $result->meta->error_message . '"';
+            }
+
+            throw new \Exception($msg ?? 'AddEventService CURL request response status *not* expected 200');
         }
 
         return $result;

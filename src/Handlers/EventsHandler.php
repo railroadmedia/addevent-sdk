@@ -1,10 +1,11 @@
 <?php
 
-namespace Railroad\AddEventSdk;
+namespace Railroad\AddEventSdk\Handlers;
 
 use Carbon\Carbon;
+use Railroad\AddEventSdk\Helpers;
 
-class EventsConnector extends Connector
+class EventsHandler extends Handler
 {
     /**
      * @param $calendarId
