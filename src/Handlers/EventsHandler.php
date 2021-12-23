@@ -114,15 +114,16 @@ class EventsHandler extends Handler
         $event = $result->event;
 
         if ($throwExceptionOnFailure) {
-            $calendarIdsMatch = $event->calendar === $calendarId;
-            $descriptionsMatch = Helpers::stringsSameIfFormattingRemoved($description, $event->description);
-            $titlesMatch = Helpers::stringsSameIfFormattingRemoved($title, $event->title);
+            $matchingCalendarIds = $event->calendar === $calendarId;
+            $matchingDescriptions = Helpers::stringsSameIfFormattingRemoved($description, $event->description);
+            $matchingTitles = Helpers::stringsSameIfFormattingRemoved($title, $event->title);
             $eventWasSetAsAllDayEvent = $event->all_day_event === 'true';
-            $allDayEventSettingsMatch = $eventWasSetAsAllDayEvent === $allDayEvent;
-            $timesMatch = Helpers::timesMatch($event, $startDate, $endDate);
+            $matchingAllDayEventSettings = $eventWasSetAsAllDayEvent === $allDayEvent;
+            $startDateObj = Carbon::parse($startDate, $timezone);
+            $matchingStartTimes = Helpers::timesMatch($event, $startDateObj, $endDate);
 
             $enoughInfoCorrectToConsiderSuccess =
-                $calendarIdsMatch && $descriptionsMatch && $titlesMatch && $allDayEventSettingsMatch && $timesMatch;
+                $matchingCalendarIds && $matchingDescriptions && $matchingTitles && $matchingAllDayEventSettings && $matchingStartTimes;
 
             if (!$enoughInfoCorrectToConsiderSuccess && $throwExceptionOnFailure) {
                 throw new \Exception(
@@ -203,7 +204,8 @@ class EventsHandler extends Handler
         $match_b = Helpers::stringsSameIfFormattingRemoved($description, $event->description);
         $match_c = Helpers::stringsSameIfFormattingRemoved($title, $event->title);
         $match_d = $resultAllDayEvent === $allDayEvent;
-        $match_e = Helpers::timesMatch($event, $startDate, $endDate);
+        $startDateObj = Carbon::parse($startDate, $timezone);
+        $match_e = Helpers::timesMatch($event, $startDateObj, $endDate);
 
         $enoughInfoCorrectToConsiderSuccess = $match_a && $match_b && $match_c && $match_d && $match_e;
 

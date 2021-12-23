@@ -89,18 +89,25 @@ class Helpers
 
     /**
      * @param $event
-     * @param $startDate
+     * @param Carbon $startDate
      * @param null $endDate
      * @return bool
      * @throws \Exception
+     *
+     * todo: clean this up
      */
-    public static function timesMatch($event, $startDate, $endDate = null)
+    public static function timesMatch($event, Carbon $startDateObj, $endDate = null)
     {
+        $startDate = $startDateObj->toDateTimeString();
+
         $tz = empty($event->timezone) ? 'Europe/London' : $event->timezone;
 
         $startFromEvent = self::getTimeFromEvent($event);
         $startFromEventTimestamp = $startFromEvent->timestamp;
-        $expected = Carbon::parse($startDate, $tz);
+
+        // trim seconds
+        $startDateTrimmed = substr($startDate, 0, strrpos($startDate, ':'));
+        $expected = Carbon::parse($startDateTrimmed, $tz);
         if ($event->all_day_event === 'true') {
             $expected->hour = 0;
             $expected->minute = 0;
