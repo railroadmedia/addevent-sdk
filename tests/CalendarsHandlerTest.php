@@ -72,7 +72,50 @@ class CalendarsHandlerTest extends TestCase
 
     public function test_update()
     {
-        $this->markTestIncomplete('to do');
+        $titleOriginal = $this->faker->sentence();
+        $titleNew = $this->faker->sentence();
+        $descriptionOriginal = $this->faker->text();
+        $descriptionNew = $this->faker->text();
+
+        $calendarCreated = $this->createTestCalendar($titleOriginal, $descriptionOriginal);
+
+        $calendarId = $calendarCreated->id;
+
+        $calendarUpdated = $this->calendarsHandler->update($calendarId, $titleNew, $descriptionNew);
+
+        $calendarsRetrieved = $this->fetchAllCalendars();
+
+        foreach($calendarsRetrieved as $calendarRetrieved){
+            if($calendarRetrieved->id === $calendarId){
+                $this->assertNotSame($titleOriginal, $calendarRetrieved->title);
+                $this->assertSame($titleNew, $calendarRetrieved->title);
+                $this->assertNotSame($descriptionOriginal, $calendarRetrieved->description);
+                $this->assertSame($descriptionNew, $calendarRetrieved->description);
+
+                $this->assertSame($calendarCreated->uniquekey, $calendarRetrieved->uniquekey);
+                $this->assertSame($calendarCreated->followers_active, $calendarRetrieved->followers_active);
+                $this->assertSame($calendarCreated->followers_total, $calendarRetrieved->followers_total);
+                $this->assertSame($calendarCreated->events_total, $calendarRetrieved->events_total);
+                $this->assertSame(empty($calendarCreated->custom_data), empty($calendarRetrieved->custom_data)); // one returns literal null, the other returns empty string. Such is life.
+                $this->assertSame($calendarCreated->template_id, $calendarRetrieved->template_id);
+                $this->assertSame($calendarCreated->link_short, $calendarRetrieved->link_short);
+                $this->assertSame($calendarCreated->link_long, $calendarRetrieved->link_long);
+                $this->assertSame($calendarCreated->date_create, $calendarRetrieved->date_create);
+                $this->assertNotSame($calendarCreated->date_modified, $calendarRetrieved->date_modified);
+
+                // this is only here because it's easy to do. It's not necessary.
+                $this->assertSame($calendarUpdated->uniquekey, $calendarRetrieved->uniquekey);
+                $this->assertSame($calendarUpdated->followers_active, $calendarRetrieved->followers_active);
+                $this->assertSame($calendarUpdated->followers_total, $calendarRetrieved->followers_total);
+                $this->assertSame($calendarUpdated->events_total, $calendarRetrieved->events_total);
+                $this->assertSame(empty($calendarUpdated->custom_data), empty($calendarRetrieved->custom_data)); // one returns literal null, the other returns empty string. Such is life.
+                $this->assertSame($calendarUpdated->template_id, $calendarRetrieved->template_id);
+                $this->assertSame($calendarUpdated->link_short, $calendarRetrieved->link_short);
+                $this->assertSame($calendarUpdated->link_long, $calendarRetrieved->link_long);
+                $this->assertSame($calendarUpdated->date_create, $calendarRetrieved->date_create);
+                $this->assertSame($calendarUpdated->date_modified, $calendarRetrieved->date_modified);
+            }
+        }
     }
 
     public function test_delete()

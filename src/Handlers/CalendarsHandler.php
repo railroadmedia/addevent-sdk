@@ -80,7 +80,7 @@ class CalendarsHandler extends Handler
     {
         $params = [
             'token' => $this->apiToken, // required
-            'calendar-id' => $calendarId, // required
+            'calendar_id' => $calendarId, // required
             'title' => $title, // required
             'description' => $description
         ];
