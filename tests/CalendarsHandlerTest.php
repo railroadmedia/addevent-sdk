@@ -4,11 +4,6 @@ use Railroad\AddEventSdk\Tests\TestCase;
 
 class CalendarsHandlerTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     public function test_create()
     {
         $title = $this->faker->sentence();
@@ -24,6 +19,7 @@ class CalendarsHandlerTest extends TestCase
 
     public function test_read()
     {
+        $expectedCalendars = [];
         $numberOfCalendarsToCreateForTest = rand(2,4);
 
         for($i = 0; $i < $numberOfCalendarsToCreateForTest; $i++){
@@ -39,32 +35,38 @@ class CalendarsHandlerTest extends TestCase
             $expectedCalendars[$calendar->id] = $calendar;
         }
 
-        if(count($expectedCalendars) !== $numberOfCalendarsToCreateForTest){
+        // add one because there will always be the "main" calendar because it's not deleted by these tests' tearDown
+        $numberOfCalendarsToExpect = $numberOfCalendarsToCreateForTest + 1;
+
+        if($numberOfCalendarsToExpect !== $numberOfCalendarsToCreateForTest){
             $this->assertEquals(count($expectedCalendars), $numberOfCalendarsToCreateForTest);
         }
 
         $calendarsRetrieved = $this->fetchAllCalendars();
 
-        $this->assertEquals($numberOfCalendarsToCreateForTest, count($calendarsRetrieved));
+        $this->assertEquals($numberOfCalendarsToExpect, count($calendarsRetrieved));
 
         foreach($calendarsRetrieved as $calendarRetrieved){
-            $expectedCalendar = $expectedCalendars[$calendarRetrieved->id];
 
-            $this->assertSame($expectedCalendar->id, $calendarRetrieved->id);
-            $this->assertSame($expectedCalendar->uniquekey, $calendarRetrieved->uniquekey);
-            $this->assertSame($expectedCalendar->title, $calendarRetrieved->title);
-            $this->assertSame($expectedCalendar->description, $calendarRetrieved->description);
-            $this->assertSame($expectedCalendar->followers_active, $calendarRetrieved->followers_active);
-            $this->assertSame($expectedCalendar->followers_total, $calendarRetrieved->followers_total);
-            $this->assertSame($expectedCalendar->events_total, $calendarRetrieved->events_total);
-            $this->assertSame(empty($expectedCalendar->custom_data), empty($calendarRetrieved->custom_data)); // one returns literal null, the other returns empty string. Such is life.
-            $this->assertSame($expectedCalendar->template_id, $calendarRetrieved->template_id);
-            $this->assertSame($expectedCalendar->link_short, $calendarRetrieved->link_short);
-            $this->assertSame($expectedCalendar->link_long, $calendarRetrieved->link_long);
-            $this->assertSame($expectedCalendar->date_create, $calendarRetrieved->date_create);
-            $this->assertSame($expectedCalendar->date_modified, $calendarRetrieved->date_modified);
+            $isMain = filter_var($calendarRetrieved->main_calendar,FILTER_VALIDATE_BOOLEAN);
 
-            //$this->assertSame(false, $calendarRetrieved->main_calendar); // todo: how to determine what this should be?
+            if(!$isMain){ // don't evaluate the main calendar because it's not part of this test
+                $expectedCalendar = $expectedCalendars[$calendarRetrieved->id];
+
+                $this->assertSame($expectedCalendar->id, $calendarRetrieved->id);
+                $this->assertSame($expectedCalendar->uniquekey, $calendarRetrieved->uniquekey);
+                $this->assertSame($expectedCalendar->title, $calendarRetrieved->title);
+                $this->assertSame($expectedCalendar->description, $calendarRetrieved->description);
+                $this->assertSame($expectedCalendar->followers_active, $calendarRetrieved->followers_active);
+                $this->assertSame($expectedCalendar->followers_total, $calendarRetrieved->followers_total);
+                $this->assertSame($expectedCalendar->events_total, $calendarRetrieved->events_total);
+                $this->assertSame(empty($expectedCalendar->custom_data), empty($calendarRetrieved->custom_data)); // one returns literal null, the other returns empty string. Such is life.
+                $this->assertSame($expectedCalendar->template_id, $calendarRetrieved->template_id);
+                $this->assertSame($expectedCalendar->link_short, $calendarRetrieved->link_short);
+                $this->assertSame($expectedCalendar->link_long, $calendarRetrieved->link_long);
+                $this->assertSame($expectedCalendar->date_create, $calendarRetrieved->date_create);
+                $this->assertSame($expectedCalendar->date_modified, $calendarRetrieved->date_modified);
+            }
         }
     }
 

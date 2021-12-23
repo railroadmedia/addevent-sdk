@@ -64,7 +64,7 @@ class TestCase extends BaseTestCase
     public function test_call_API()
     {
         try{
-            $this->calendarsHandler->get();
+            $calendars = $this->calendarsHandler->list();
         }catch(\Exception $exception){
             $this->fail($exception->getMessage());
         }
@@ -127,7 +127,8 @@ class TestCase extends BaseTestCase
         }
 
         foreach($calendarsToDelete as $calendarToDelete){
-            if(!$calendarToDelete->main_calendar){
+            $isMainCalendar = filter_var($calendarToDelete->main_calendar,FILTER_VALIDATE_BOOLEAN);
+            if(!$isMainCalendar){
                 try{
                     $this->calendarsHandler->delete($calendarToDelete->id);
                 }catch(\Exception $exception){
