@@ -33,6 +33,8 @@ class TestCase extends BaseTestCase
 
         $this->calendarsHandler = app(CalendarsHandler::class);
         $this->eventsHandler = app(EventsHandler::class);
+
+        $this->deleteAllCalendars();
     }
 
     protected function tearDown(): void
