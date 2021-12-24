@@ -254,6 +254,6 @@ class EventsHandler extends Handler
             );
         }
 
-        return $result;
+        return true;
     }
 }
