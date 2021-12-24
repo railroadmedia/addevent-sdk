@@ -1,10 +1,12 @@
 <?php
 
 use Carbon\Carbon;
+use Railroad\AddEventSdk\Entities\Event;
 use Railroad\AddEventSdk\Helpers;
 use Railroad\AddEventSdk\Tests\TestCase;
 
-// todo: add test cases where more params are specified when creating events
+// todo: OOP the shit outta this
+// todo: add test cases where more params are specified when creating events?
 
 class EventsHandlerTest extends TestCase
 {
@@ -25,7 +27,14 @@ class EventsHandlerTest extends TestCase
             $startDateToSet
         );
 
-        $this->assertNotEmpty($eventCreated->id);
+        try{
+            $eventObj = new Event($eventCreated);
+        }catch(\Exception $e){
+            $this->fail('failed with exception with message: ' . $e->getMessage());
+        }
+        $this->assertNotEmpty($eventObj->getId());
+        $this->assertSame($eventTitleToSet, $eventObj->getTitle());
+        $this->assertSame($timezoneToSet, $eventObj->getTimezone());
     }
 
     public function test_read()

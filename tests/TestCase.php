@@ -4,15 +4,14 @@ namespace Railroad\AddEventSdk\Tests;
 
 use Faker\Factory;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Railroad\AddEventSdk\Entities\Account;
+use Railroad\AddEventSdk\Entities\Calendar;
 use Railroad\AddEventSdk\Handlers\CalendarsHandler;
 use Railroad\AddEventSdk\Handlers\EventsHandler;
 
 class TestCase extends BaseTestCase
 {
     protected $apiToken;
-
-    /** @var CalendarsHandler */
-    protected $calendarsHandler;
 
     /** @var EventsHandler */
     protected $eventsHandler;
@@ -23,6 +22,9 @@ class TestCase extends BaseTestCase
     /** @var array */
     protected $calendarsToDeleteAtTearDown;
 
+    /** @var Account */
+    private $accountForTestSupport;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,8 +33,7 @@ class TestCase extends BaseTestCase
 
         $this->apiToken = config('addevent-sdk.api-token');
 
-        $this->calendarsHandler = app(CalendarsHandler::class);
-        $this->eventsHandler = app(EventsHandler::class);
+        $this->accountForTestSupport = new Account();
 
         $this->deleteAllCalendars();
     }
@@ -94,25 +95,15 @@ class TestCase extends BaseTestCase
         return $calendar;
     }
 
-    protected function fetchAllCalendars()
-    {
-        try{
-            $calendarsRetrieved = $this->calendarsHandler->list();
-        }catch(\Exception $exception){
-            $this->fail('Calendar list failed. Exception message: "' . $exception->getMessage() . '"');
-        }
-
-        return $calendarsRetrieved;
-    }
-
     private function deleteAllCalendars()
     {
         $calendarsWithMoreThanOneFollower = [];
 
-        $calendarsToDelete = $this->fetchAllCalendars();
+        $calendarsToDelete = $this->accountForTestSupport->calendars();
 
         foreach($calendarsToDelete as $calendar){
-            $moreThanOneFollower = (int) $calendar->followers_total > 1;
+            /** @var $calendar Calendar */
+            $moreThanOneFollower = (int) $calendar->getFollowersTotal() > 1;
             if($moreThanOneFollower){
                 $calendarsWithMoreThanOneFollower[] = $calendar;
             }
@@ -123,18 +114,18 @@ class TestCase extends BaseTestCase
                 'followers than expected which is potential indication of production calendars. Double-check your ' .
                 'configuration to ensure you\'re not running these tests on production.' . PHP_EOL;
             foreach($calendarsWithMoreThanOneFollower as $calendar){
-                echo '* calendar ' . $calendar->id . '("' . $calendar->title . '") has ' . $calendar->followers_total . ' followers' . PHP_EOL;
+                echo '* calendar ' . $calendar->getId() . '("' . $calendar->getTitle() . '") has ' . $calendar->getFollowersTotal() . ' followers' . PHP_EOL;
             }
             $this->fail('Calendar deletion halted preemptively, see test output');
         }
 
         foreach($calendarsToDelete as $calendarToDelete){
-            $isMainCalendar = filter_var($calendarToDelete->main_calendar,FILTER_VALIDATE_BOOLEAN);
-            if(!$isMainCalendar){
+            /** @var $calendarToDelete Calendar */
+            if(!$calendarToDelete->getMainCalendar()){
                 try{
-                    $this->calendarsHandler->delete($calendarToDelete->id);
+                    $calendarToDelete->delete();
                 }catch(\Exception $exception){
-                    echo 'Deletion failed for calendar ' . $calendarToDelete->id . ' ("' . $calendarToDelete->title . '") with message: ' . $exception->getMessage();
+                    echo 'Deletion failed for calendar ' . $calendarToDelete->getId() . ' ("' . $calendarToDelete->getTitle() . '") with message: ' . $exception->getMessage();
                     $calendarDeletionFailed = true;
                 }
             }

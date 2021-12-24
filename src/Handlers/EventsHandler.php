@@ -3,9 +3,12 @@
 namespace Railroad\AddEventSdk\Handlers;
 
 use Carbon\Carbon;
+use Railroad\AddEventSdk\Entities\Event;
 use Railroad\AddEventSdk\Helpers;
 
-class EventsHandler extends Handler
+// todo: OOP the shit outta this, and then delete it
+
+class EventsHandler
 {
     /**
      * @param $calendarId
@@ -112,6 +115,8 @@ class EventsHandler extends Handler
         Helpers::ensureProperty($result, 'event');
 
         $event = $result->event;
+
+        //Event::class
 
         if ($throwExceptionOnFailure) {
             $matchingCalendarIds = $event->calendar === $calendarId;

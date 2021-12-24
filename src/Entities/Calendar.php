@@ -2,7 +2,7 @@
 
 namespace Railroad\AddEventSdk\Entities;
 
-class Calendar
+class Calendar extends Entity
 {
     private $id;
     private $uniqueKey;
@@ -15,6 +15,7 @@ class Calendar
     private $followersActive;
     private $followersTotal;
     private $eventsTotal;
+    private $mainCalendar;
     private $customData;
     private $templateId;
     private $templateEmbedId;
@@ -23,49 +24,99 @@ class Calendar
     private $dateCreate;
     private $dateModified;
 
-    private static $propertiesMap = [
-        'id' => 'id',
-        'uniquekey' => 'uniqueKey',
-        'title' => 'title',
-        'description' => 'description',
-        'timezone' => 'timezone',
-        'weekday_begin' => 'weekdayBegin',
-        'calendar_color' => 'calendarColor',
-        'palette_id' => 'paletteId',
-        'followers_active' => 'followersActive',
-        'followers_total' => 'followersTotal',
-        'events_total' => 'eventsTotal',
-        'custom_data' => 'customData',
-        'template_id' => 'templateId',
-        'template_embed_id' => 'templateEmbedId',
-        'link_short' => 'linkShort',
-        'link_long' => 'linkLong',
-        'date_create' => 'dateCreate',
-        'date_modified' => 'dateModified',
-    ];
+//    private static $propertiesMap = [
+//        'id' => 'id',
+//        'uniquekey' => 'uniqueKey',
+//        'title' => 'title',
+//        'description' => 'description',
+//        'timezone' => 'timezone',
+//        'weekday_begin' => 'weekdayBegin',
+//        'calendar_color' => 'calendarColor',
+//        'palette_id' => 'paletteId',
+//        'followers_active' => 'followersActive',
+//        'followers_total' => 'followersTotal',
+//        'events_total' => 'eventsTotal',
+//        'custom_data' => 'customData',
+//        'template_id' => 'templateId',
+//        'template_embed_id' => 'templateEmbedId',
+//        'link_short' => 'linkShort',
+//        'link_long' => 'linkLong',
+//        'date_create' => 'dateCreate',
+//        'date_modified' => 'dateModified',
+//    ];
 
     /**
      * @throws \Exception
      */
-    public function fill(\stdClass $calendar)
+    public function __construct(\stdClass $stdClassObj)
     {
-        foreach(self::$propertiesMap as $key => $value){
+        parent::__construct();
 
-            $errorMsgs = [];
-
-            if(isset($calendar->$key)){
-                $method = 'set' . ucfirst($value);
-                $this->$method($calendar->$key);
-            }else{
-                $errorMsgs[] = $key . ' was not set on calendar passed object passed to ' . self::class . '@fill';
-            }
-
-            if(!empty($errorMsgs)){
-                throw new \Exception($errorMsgs, ', also ');
-            }
+        if(isset($stdClassObj->id)){
+            $this->setId($stdClassObj->id); // id
+        }
+        if(isset($stdClassObj->uniquekey)){
+            $this->setUniqueKey($stdClassObj->uniquekey); // uniqueKey
+        }
+        if(isset($stdClassObj->title)){
+            $this->setTitle($stdClassObj->title); // title
+        }
+        if(isset($stdClassObj->description)){
+            $this->setDescription($stdClassObj->description); // description
+        }
+        if(isset($stdClassObj->timezone)){
+            $this->setTimezone($stdClassObj->timezone); // timezone
+        }
+        if(isset($stdClassObj->weekday_begin)){
+            $this->setWeekdayBegin($stdClassObj->weekday_begin); // weekdayBegin
+        }
+        if(isset($stdClassObj->calendar_color)){
+            $this->setCalendarColor($stdClassObj->calendar_color); // calendarColor
+        }
+        if(isset($stdClassObj->palette_id)){
+            $this->setPaletteId($stdClassObj->palette_id); // paletteId
+        }
+        if(isset($stdClassObj->followers_active)){
+            $this->setFollowersActive($stdClassObj->followers_active); // followersActive
+        }
+        if(isset($stdClassObj->followers_total)){
+            $this->setFollowersTotal($stdClassObj->followers_total); // followersTotal
+        }
+        if(isset($stdClassObj->events_total)){
+            $this->setEventsTotal($stdClassObj->events_total); // eventsTotal
+        }
+        if(isset($stdClassObj->main_calendar)){
+            $this->setMainCalendar($stdClassObj->main_calendar); // eventsTotal
+        }
+        if(isset($stdClassObj->custom_data)){
+            $this->setCustomData($stdClassObj->custom_data); // customData
+        }
+        if(isset($stdClassObj->template_id)){
+            $this->setTemplateId($stdClassObj->template_id); // templateId
+        }
+        if(isset($stdClassObj->template_embed_id)){
+            $this->setTemplateEmbedId($stdClassObj->template_embed_id); // templateEmbedId
+        }
+        if(isset($stdClassObj->link_short)){
+            $this->setLinkShort($stdClassObj->link_short); // linkShort
+        }
+        if(isset($stdClassObj->link_long)){
+            $this->setLinkLong($stdClassObj->link_long); // linkLong
+        }
+        if(isset($stdClassObj->date_create)){
+            $this->setDateCreate($stdClassObj->date_create); // dateCreate
+        }
+        if(isset($stdClassObj->date_modified)){
+            $this->setDateModified($stdClassObj->date_modified); // dateModified
         }
     }
 
+    // getters and setters -----------------------------------------
+
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setId($value)
     {
         $this->id = $value;
@@ -76,6 +127,10 @@ class Calendar
         return $this->id;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setUniqueKey($value)
     {
         $this->uniqueKey = $value;
@@ -86,6 +141,10 @@ class Calendar
         return $this->uniqueKey;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setTitle($value)
     {
         $this->title = $value;
@@ -96,6 +155,10 @@ class Calendar
         return $this->title;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setDescription($value)
     {
         $this->description = $value;
@@ -106,6 +169,10 @@ class Calendar
         return $this->description;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setTimezone($value)
     {
         $this->timezone = $value;
@@ -116,6 +183,10 @@ class Calendar
         return $this->timezone;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setWeekdayBegin($value)
     {
         $this->weekdayBegin = $value;
@@ -126,6 +197,10 @@ class Calendar
         return $this->weekdayBegin;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setCalendarColor($value)
     {
         $this->calendarColor = $value;
@@ -136,6 +211,10 @@ class Calendar
         return $this->calendarColor;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setPaletteId($value)
     {
         $this->paletteId = $value;
@@ -146,6 +225,10 @@ class Calendar
         return $this->paletteId;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setFollowersActive($value)
     {
         $this->followersActive = $value;
@@ -156,6 +239,10 @@ class Calendar
         return $this->followersActive;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setFollowersTotal($value)
     {
         $this->followersTotal = $value;
@@ -166,6 +253,10 @@ class Calendar
         return $this->followersTotal;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setEventsTotal($value)
     {
         $this->eventsTotal = $value;
@@ -176,6 +267,24 @@ class Calendar
         return $this->eventsTotal;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
+    public function setMainCalendar($value)
+    {
+        $this->mainCalendar = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    public function getMainCalendar()
+    {
+        return $this->mainCalendar;
+    }
+
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setCustomData($value)
     {
         $this->customData = $value;
@@ -186,6 +295,10 @@ class Calendar
         return $this->customData;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setTemplateId($value)
     {
         $this->templateId = $value;
@@ -196,6 +309,10 @@ class Calendar
         return $this->templateId;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setTemplateEmbedId($value)
     {
         $this->templateEmbedId = $value;
@@ -206,6 +323,10 @@ class Calendar
         return $this->templateEmbedId;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setLinkShort($value)
     {
         $this->linkShort = $value;
@@ -216,6 +337,10 @@ class Calendar
         return $this->linkShort;
     }
 
+    /**
+     * @param string|null $value
+     * @return void
+     */
     public function setLinkLong($value)
     {
         $this->linkLong = $value;
@@ -226,6 +351,10 @@ class Calendar
         return $this->linkLong;
     }
 
+    /**
+     * @param int|null $value
+     * @return void
+     */
     public function setDateCreate($value)
     {
         $this->dateCreate = $value;
@@ -236,6 +365,10 @@ class Calendar
         return $this->dateCreate;
     }
 
+    /**
+     * @param int|null $value
+     * @return void
+     */
     public function setDateModified($value)
     {
         $this->dateModified = $value;
@@ -244,5 +377,115 @@ class Calendar
     public function getDateModified()
     {
         return $this->dateModified;
+    }
+
+    // utils -----------------------------------------
+
+    /**
+     * @return void
+     * @throws \Exception
+     */
+    public function persist()
+    {
+        $result = $this->curl(
+            'https://www.addevent.com/api/v1/me/calendars/save/?' . self::arrayToQueryString([
+                'token' => $this->apiToken, // required
+                'calendar_id' => $this->getId(), // required
+                'title' => $this->getTitle(), // required
+                'description' => $this->getDescription()
+            ]));
+
+        if($result->calendar->id !== $this->getId() ){
+            throw new \Exception('value from persisted calendar not as expected. ". id" is "' . var_dump($result->calendar->id, true) . '" but should be "' . $this->getId() . '"');
+        }
+        if($result->calendar->uniquekey !== $this->getUniqueKey() ){
+            throw new \Exception('value from persisted calendar not as expected. "uniquekey" is "' . var_dump($result->calendar->uniquekey, true) . '" but should be "' . $this->getUniqueKey() . '"');
+        }
+        if($result->calendar->title !== $this->getTitle() ){
+            throw new \Exception('value from persisted calendar not as expected. "title" is "' . var_dump($result->calendar->title, true) . '" but should be "' . $this->getTitle() . '"');
+        }
+        if($result->calendar->description !== $this->getDescription() ){
+            throw new \Exception('value from persisted calendar not as expected. "description" is "' . var_dump($result->calendar->description, true) . '" but should be "' . $this->getDescription() . '"');
+        }
+        if($result->calendar->timezone !== $this->getTimezone() ){
+            throw new \Exception('value from persisted calendar not as expected. "timezone" is "' . var_dump($result->calendar->timezone, true) . '" but should be "' . $this->getTimezone() . '"');
+        }
+        if($result->calendar->weekday_begin !== $this->getWeekdayBegin() ){
+            throw new \Exception('value from persisted calendar not as expected. "weekday_begin" is "' . var_dump($result->calendar->weekday_begin, true) . '" but should be "' . $this->getWeekdayBegin() . '"');
+        }
+        if($result->calendar->calendar_color !== $this->getCalendarColor() ){
+            throw new \Exception('value from persisted calendar not as expected. "calendar_color" is "' . var_dump($result->calendar->calendar_color, true) . '" but should be "' . $this->getCalendarColor() . '"');
+        }
+        if($result->calendar->palette_id !== $this->getPaletteId() ){
+            throw new \Exception('value from persisted calendar not as expected. "palette_id" is "' . var_dump($result->calendar->palette_id, true) . '" but should be "' . $this->getPaletteId() . '"');
+        }
+        if($result->calendar->followers_active !== $this->getFollowersActive() ){
+            throw new \Exception('value from persisted calendar not as expected. "followers_active" is "' . var_dump($result->calendar->followers_active, true) . '" but should be "' . $this->getFollowersActive() . '"');
+        }
+        if($result->calendar->followers_total !== $this->getFollowersTotal() ){
+            throw new \Exception('value from persisted calendar not as expected. "followers_total" is "' . var_dump($result->calendar->followers_total, true) . '" but should be "' . $this->getFollowersTotal() . '"');
+        }
+        if($result->calendar->events_total !== $this->getEventsTotal() ){
+            throw new \Exception('value from persisted calendar not as expected. "events_total" is "' . var_dump($result->calendar->events_total, true) . '" but should be "' . $this->getEventsTotal() . '"');
+        }
+        if($result->calendar->custom_data !== $this->getCustomData() ){
+            $itsFine = ($result->calendar->custom_data === '') && ($this->getCustomData() === null);
+            if(!$itsFine){
+                throw new \Exception('value from persisted calendar not as expected. "custom_data" is "' . var_dump($result->calendar->custom_data, true) . '" but should be "' . $this->getCustomData() . '"');
+            }
+        }
+        if($result->calendar->template_id !== $this->getTemplateId() ){
+            throw new \Exception('value from persisted calendar not as expected. "template_id" is "' . var_dump($result->calendar->template_id, true) . '" but should be "' . $this->getTemplateId() . '"');
+        }
+        if($result->calendar->template_embed_id !== $this->getTemplateEmbedId() ){
+            throw new \Exception('value from persisted calendar not as expected. "template_embed_id" is "' . var_dump($result->calendar->template_embed_id, true) . '" but should be "' . $this->getTemplateEmbedId() . '"');
+        }
+        if($result->calendar->link_short !== $this->getLinkShort() ){
+            throw new \Exception('value from persisted calendar not as expected. "link_short" is "' . var_dump($result->calendar->link_short, true) . '" but should be "' . $this->getLinkShort() . '"');
+        }
+        if($result->calendar->link_long !== $this->getLinkLong() ){
+            throw new \Exception('value from persisted calendar not as expected. "link_long" is "' . var_dump($result->calendar->link_long, true) . '" but should be "' . $this->getLinkLong() . '"');
+        }
+        if($result->calendar->date_create !== $this->getDateCreate() ){
+            throw new \Exception('value from persisted calendar not as expected. "date_create" is "' . var_dump($result->calendar->date_create, true) . '" but should be "' . $this->getDateCreate() . '"');
+        }
+        if($result->calendar->date_modified === $this->getDateModified() ){
+            throw new \Exception('value from persisted calendar not as expected. "date_modified" is the same value ("' . $this->getDateModified() . '") before and after persist');
+        }
+    }
+
+    public function delete()
+    {
+        $params = [
+            'token' => $this->apiToken, // required
+            'calendar_id' => $this->getId()
+        ];
+
+        $result = $this->curl('https://www.addevent.com/api/v1/me/calendars/delete/?' . self::arrayToQueryString($params));
+
+        $deleted = $result->calendar->status === 'deleted';
+
+        if(!$deleted){
+            throw new \Exception('Reponse not as expected. curl $result did not meet $result->calendar->status === \'deleted\' check. Rather value of $result is: "' . var_dump($deleted, true) . '"');
+        }
+
+        $this->setId(null);
+        $this->setUniqueKey(null);
+        $this->setTitle(null);
+        $this->setDescription(null);
+        $this->setTimezone(null);
+        $this->setWeekdayBegin(null);
+        $this->setCalendarColor(null);
+        $this->setPaletteId(null);
+        $this->setFollowersActive(null);
+        $this->setFollowersTotal(null);
+        $this->setEventsTotal(null);
+        $this->setCustomData(null);
+        $this->setTemplateId(null);
+        $this->setTemplateEmbedId(null);
+        $this->setLinkShort(null);
+        $this->setLinkLong(null);
+        $this->setDateCreate(null);
+        $this->setDateModified(null);
     }
 }
