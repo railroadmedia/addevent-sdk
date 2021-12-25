@@ -2,6 +2,7 @@
 
 namespace Railroad\AddEventSdk\Tests;
 
+use Carbon\Carbon;
 use Railroad\AddEventSdk\Entities\Account;
 use Railroad\AddEventSdk\Entities\Calendar;
 
@@ -44,19 +45,7 @@ class CalendarEntityTest extends TestCase
         $title = $this->faker->sentence();
         $description = $this->faker->text();
         $account = new Account();
-
         $calendar = $account->createCalendar($title, $description);
-
-        $calendarMalformed = !is_numeric($calendar->getId())
-            || empty($calendar->getUniqueKey())
-            || ($title !== $calendar->getTitle())
-            || $description !== $calendar->getDescription();
-        if($calendarMalformed){
-            $this->assertTrue(is_numeric($calendar->getId()));
-            $this->assertTrue(!empty($calendar->getUniqueKey()));
-            $this->assertSame($title, $calendar->getTitle());
-            $this->assertSame($description, $calendar->getDescription());
-        }
 
         $countBefore = count($account->calendars());
 
@@ -87,5 +76,25 @@ class CalendarEntityTest extends TestCase
         $this->assertNull($calendar->getLinkLong());
         $this->assertNull($calendar->getDateCreate());
         $this->assertNull($calendar->getDateModified());
+    }
+
+    public function test_create_event()
+    {
+        $calendarTitle = rtrim($this->faker->sentence(), '.');
+        $calendarDescription = $this->faker->text();
+        $account = new Account();
+        $calendar = $account->createCalendar($calendarTitle, $calendarDescription);
+
+        $this->assertEquals(0, count($calendar->events()));
+
+        $eventTitle = rtrim($this->faker->sentence(), '.');
+        $eventTimezone = $this->faker->timezone;
+        $eventStartTime = Carbon::now($eventTimezone)->addDays(rand(4,20))->addHours(rand(0,23))->addMinutes(rand(0,59));
+        $event = $calendar->createEvent($eventTitle, $eventTimezone, $eventStartTime);
+        $this->assertSame($eventTitle, $event->getTitle());
+        $this->assertSame($eventTimezone, $event->getTimezone());
+        $this->assertSame($eventStartTime->toDateTimeString(), $event->getStart()->toDateTimeString());
+
+        $this->assertEquals(1, count($calendar->events()));
     }
 }

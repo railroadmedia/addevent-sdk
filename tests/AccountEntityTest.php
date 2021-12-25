@@ -31,4 +31,32 @@ class AccountEntityTest extends TestCase
         $this->assertSame($title, $calendar->getTitle());
         $this->assertSame($description, $calendar->getDescription());
     }
+
+    public function test_get_timezones()
+    {
+        $account = new Account();
+        $timezones = $account->getTimezones();
+        $foo = 'bar';
+    }
+
+    public function test_does_faker_ever_give_a_timezone_not_used_by_addevent()
+    {
+        $account = new Account();
+        $timezones = $account->getTimezones();
+
+        for($i=0; $i < 100000; $i++){
+            $timezone = $this->faker->timezone;
+            if(!in_array($timezone, $timezones)){
+                $found[] = $timezone;
+            }
+        }
+
+        $found = array_values(array_unique($found ?? []));
+
+        // var_dump($found);
+
+        $this->assertSame(2, count($found));
+        $this->assertTrue(in_array('Australia/Currie', $found));
+        $this->assertTrue(in_array('Pacific/Enderbury', $found));
+    }
 }

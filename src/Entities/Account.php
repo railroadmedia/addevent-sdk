@@ -62,4 +62,17 @@ class Account extends Entity
             )->calendar
         );
     }
+
+    public function getTimezones()
+    {
+        $result = $this->curl('https://www.addevent.com/api/v1/timezones');
+
+        $timezonesSimple = [];
+
+        foreach($result->data as $timezone){
+            $timezonesSimple[] = $timezone->label;
+        }
+
+        return $timezonesSimple;
+    }
 }

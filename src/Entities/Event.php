@@ -2,7 +2,9 @@
 
 namespace Railroad\AddEventSdk\Entities;
 
-class Event
+use Carbon\Carbon;
+
+class Event extends Entity
 {
     private $id;
     private $calendar;
@@ -34,6 +36,8 @@ class Event
 
     public function __construct($stdClassObj)
     {
+        parent::__construct();
+
         // example: '10954490',
         if(isset($stdClassObj->id)){
             $this->setId($stdClassObj->id);
@@ -81,7 +85,7 @@ class Event
 
         // example: '14:45:38',
         if(isset($stdClassObj->date_start_time)){
-            $this->setdateStartTime($stdClassObj->date_start_time);
+            $this->setDateStartTime($stdClassObj->date_start_time);
         }
 
         // example: 'PM',
@@ -183,7 +187,7 @@ class Event
     /**
      * @param string $id
      */
-    public function setId(string $id): void
+    public function setId($id): void
     {
         $this->id = $id;
     }
@@ -199,7 +203,7 @@ class Event
     /**
      * @param string $calendar
      */
-    public function setCalendar(string $calendar): void
+    public function setCalendar($calendar): void
     {
         $this->calendar = $calendar;
     }
@@ -215,7 +219,7 @@ class Event
     /**
      * @param string $unique
      */
-    public function setUnique(string $unique): void
+    public function setUnique($unique): void
     {
         $this->unique = $unique;
     }
@@ -231,7 +235,7 @@ class Event
     /**
      * @param string $title
      */
-    public function setTitle(string $title): void
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
@@ -247,7 +251,7 @@ class Event
     /**
      * @param string $description
      */
-    public function setDescription(string $description): void
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
@@ -263,7 +267,7 @@ class Event
     /**
      * @param string $location
      */
-    public function setLocation(string $location): void
+    public function setLocation($location): void
     {
         $this->location = $location;
     }
@@ -279,7 +283,7 @@ class Event
     /**
      * @param string $organizer
      */
-    public function setOrganizer(string $organizer): void
+    public function setOrganizer($organizer): void
     {
         $this->organizer = $organizer;
     }
@@ -295,7 +299,7 @@ class Event
     /**
      * @param string $organizerEmail
      */
-    public function setOrganizerEmail(string $organizerEmail): void
+    public function setOrganizerEmail($organizerEmail): void
     {
         $this->organizerEmail = $organizerEmail;
     }
@@ -311,7 +315,7 @@ class Event
     /**
      * @param string $dateStart
      */
-    public function setDateStart(string $dateStart): void
+    private function setDateStart($dateStart): void
     {
         $this->dateStart = $dateStart;
     }
@@ -327,7 +331,7 @@ class Event
     /**
      * @param string $dateStartTime
      */
-    public function setDateStartTime(string $dateStartTime): void
+    private function setDateStartTime($dateStartTime): void
     {
         $this->dateStartTime = $dateStartTime;
     }
@@ -343,7 +347,7 @@ class Event
     /**
      * @param string $dateStartAmPm
      */
-    public function setDateStartAmPm(string $dateStartAmPm): void
+    private function setDateStartAmPm($dateStartAmPm): void
     {
         $this->dateStartAmPm = $dateStartAmPm;
     }
@@ -359,7 +363,7 @@ class Event
     /**
      * @param string $dateEnd
      */
-    public function setDateEnd(string $dateEnd): void
+    private function setDateEnd($dateEnd): void
     {
         $this->dateEnd = $dateEnd;
     }
@@ -375,7 +379,7 @@ class Event
     /**
      * @param string $dateEndTime
      */
-    public function setDateEndTime(string $dateEndTime): void
+    private function setDateEndTime($dateEndTime): void
     {
         $this->dateEndTime = $dateEndTime;
     }
@@ -391,7 +395,7 @@ class Event
     /**
      * @param string $dateEndAmPm
      */
-    public function setDateEndAmPm(string $dateEndAmPm): void
+    private function setDateEndAmPm($dateEndAmPm): void
     {
         $this->dateEndAmPm = $dateEndAmPm;
     }
@@ -407,7 +411,7 @@ class Event
     /**
      * @param string $allDayEvent
      */
-    public function setAllDayEvent(string $allDayEvent): void
+    public function setAllDayEvent($allDayEvent): void
     {
         $this->allDayEvent = filter_var($allDayEvent, FILTER_VALIDATE_BOOLEAN);
     }
@@ -423,7 +427,7 @@ class Event
     /**
      * @param string $dateFormat
      */
-    public function setDateFormat(string $dateFormat): void
+    public function setDateFormat($dateFormat): void
     {
         $this->dateFormat = $dateFormat;
     }
@@ -439,7 +443,7 @@ class Event
     /**
      * @param string $timezone
      */
-    public function setTimezone(string $timezone): void
+    public function setTimezone($timezone): void
     {
         $this->timezone = $timezone;
     }
@@ -455,7 +459,7 @@ class Event
     /**
      * @param string $reminder
      */
-    public function setReminder(string $reminder): void
+    public function setReminder($reminder): void
     {
         $this->reminder = $reminder;
     }
@@ -471,7 +475,7 @@ class Event
     /**
      * @param string $rRule
      */
-    public function setRRule(string $rRule): void
+    public function setRRule($rRule): void
     {
         $this->rRule = $rRule;
     }
@@ -487,7 +491,7 @@ class Event
     /**
      * @param string $templateId
      */
-    public function setTemplateId(string $templateId): void
+    public function setTemplateId($templateId): void
     {
         $this->templateId = $templateId;
     }
@@ -503,7 +507,7 @@ class Event
     /**
      * @param string $color
      */
-    public function setColor(string $color): void
+    public function setColor($color): void
     {
         $this->color = $color;
     }
@@ -519,7 +523,7 @@ class Event
     /**
      * @param string $customData
      */
-    public function setCustomData(string $customData): void
+    public function setCustomData($customData): void
     {
         $this->customData = $customData;
     }
@@ -535,7 +539,7 @@ class Event
     /**
      * @param string $updatedTimes
      */
-    public function setUpdatedTimes(string $updatedTimes): void
+    public function setUpdatedTimes($updatedTimes): void
     {
         $this->updatedTimes = $updatedTimes;
     }
@@ -551,7 +555,7 @@ class Event
     /**
      * @param string $linkShort
      */
-    public function setLinkShort(string $linkShort): void
+    public function setLinkShort($linkShort): void
     {
         $this->linkShort = $linkShort;
     }
@@ -567,7 +571,7 @@ class Event
     /**
      * @param string $linkLong
      */
-    public function setLinkLong(string $linkLong): void
+    public function setLinkLong($linkLong): void
     {
         $this->linkLong = $linkLong;
     }
@@ -583,7 +587,7 @@ class Event
     /**
      * @param mixed $dateCreate
      */
-    public function setDateCreate(int $dateCreate): void
+    public function setDateCreate($dateCreate): void
     {
         $this->dateCreate = $dateCreate;
     }
@@ -599,10 +603,144 @@ class Event
     /**
      * @param int $dateModified
      */
-    public function setDateModified(int $dateModified): void
+    public function setDateModified($dateModified): void
     {
         $this->dateModified = $dateModified;
     }
 
+    // --------------------------------------------------------------
 
+    /**
+     * @return Carbon|false
+     */
+    public function getStart()
+    {
+        $actualDateStartConcatenated = $this->getDateStart() . ' ' . $this->getDateStartTime();
+
+        return Carbon::createFromFormat('m/d/Y H:i:s', $actualDateStartConcatenated, $this->getTimezone());
+    }
+
+    /**
+     * @param Carbon $time
+     * @throws \Exception
+     * @return void
+     */
+    public function setStart(Carbon $newStart)
+    {
+        $newStartIsAfterCurrentEnd = $newStart->gt($this->getEnd());
+        if($newStartIsAfterCurrentEnd){
+            $previousLength = $this->getStart()->diffInSeconds($this->getEnd());
+            $this->setEnd($this->getEnd()->addSeconds($previousLength));
+        }
+
+        var_dump('setStart will set: ' . $newStart->format('m/d/Y') . ' ' . $newStart->format('H:i:s') . ' ' . $newStart->format('A'));
+
+        $this->setDateStart($newStart->format('m/d/Y'));
+        $this->setDateStartTime($newStart->format('H:i:s'));
+        $this->setDateStartAmPm($newStart->format('A'));
+        $this->setTimezone($newStart->getTimezone());
+    }
+
+    /**
+     * @return Carbon|false
+     */
+    public function getEnd()
+    {
+        $concat = $this->getDateEnd() . ' ' . $this->getDateEndTime() . ' ' . $this->getDateEndAmPm();
+        return Carbon::createFromFormat('m/d/Y H:i:s A', $concat, $this->getTimezone());
+    }
+
+    /**
+     * @param Carbon $time
+     * @throws \Exception
+     * @return void
+     */
+    public function setEnd(Carbon $newEnd)
+    {
+        if($newEnd->lt($this->getStart())){
+            throw new \Exception('Cannot set new end that is time before start');
+        }
+
+        $this->setDateEnd($newEnd->format('m/d/Y'));
+        $this->setDateEndTime($newEnd->format('H:i:s'));
+        $this->setDateEndAmPm($newEnd->format('A'));
+        $this->setTimezone($newEnd->getTimezone());
+    }
+
+    public function persist()
+    {
+        $getStartProduct = $this->getStart();
+        $setThisStartDate = $getStartProduct->toDateTimeString();
+
+        $params = [
+            'token' => $this->apiToken, // required
+            'event_id' => $this->getId(), // required
+            'title' => $this->getTitle(), // required
+            'description' => $this->getDescription(),
+            'location' => $this->getLocation(),
+            'organizer' => $this->getOrganizer(),
+            'organizer_email' => $this->getOrganizerEmail(),
+            'timezone' => $this->getTimezone(), // required
+            'reminder' => $this->getReminder(),
+            'start_date' => $setThisStartDate, // required
+            'end_date' => $this->getEnd()->toDateTimeString(),
+            'all_day_event' => $this->getAllDayEvent(),
+        ];
+
+        $result = $this->curl(
+            'https://www.addevent.com/api/v1/me/calendars/events/save/?' . self::arrayToQueryString($params)
+        );
+        
+        $copy = new Event($result->event);
+
+        if($this->getId() !== $copy->getId()){
+            throw new \Exception('value from persisted event not as expected.');
+        }
+    }
+
+    public function delete()
+    {
+        $url = 'https://www.addevent.com/api/v1/me/calendars/events/delete/?' . self::arrayToQueryString([
+            'token' => $this->apiToken, 'event_id' => $this->getId()
+        ]);
+
+        $result = $this->curl($url);
+
+        self::ensureProperty($result, 'event');
+        self::ensureProperty($result->event, 'status');
+        if ($result->event->status !== 'deleted') {
+            throw new \Exception(
+                'Delete CURL request did not return expected \'status\' value of "deleted"' .
+                ' so delete may have failed'
+            );
+        }
+
+        $this->setId(null);
+        $this->setCalendar(null);
+        $this->setUnique(null);
+        $this->setTitle(null);
+        $this->setDescription(null);
+        $this->setLocation(null);
+        $this->setOrganizer(null);
+        $this->setOrganizerEmail(null);
+        $this->setDateStart(null);
+        $this->setDateStartTime(null);
+        $this->setDateStartAmPm(null);
+        $this->setDateEnd(null);
+        $this->setDateEndTime(null);
+        $this->setDateEndAmPm(null);
+        $this->setAllDayEvent(null);
+        $this->setDateFormat(null);
+        $this->setTimezone(null);
+        $this->setReminder(null);
+        $this->setRRule(null);
+        $this->setTemplateId(null);
+        $this->setColor(null);
+        $this->setCustomData(null);
+        $this->setUpdatedTimes(null);
+        $this->setLinkShort(null);
+        $this->setLinkLong(null);
+        $this->setDateCreate(null);
+        $this->setDateModified(null);
+    }
 }
