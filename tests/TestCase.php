@@ -61,40 +61,6 @@ class TestCase extends BaseTestCase
         config()->set('addevent-sdk.api-token', env('ADD_EVENT_API_TOKEN'));
     }
 
-    /*
-     * Use this to check that the tests are running
-     */
-    public function test_call_API()
-    {
-        try{
-            $calendars = $this->calendarsHandler->list();
-        }catch(\Exception $exception){
-            $this->fail($exception->getMessage());
-        }
-
-        $this->expectNotToPerformAssertions();
-    }
-
-    protected function createTestCalendar($title = null, $description = null)
-    {
-        if(!$title){
-            $title = $this->faker->sentence();
-        }
-        if(!$description){
-            $description = $this->faker->text();
-        }
-
-        try{
-            $calendar = $this->calendarsHandler->create($title, $description);
-        }catch(\Exception $exception){
-            $this->fail('Calendar creation failed. Exception message: "' . $exception->getMessage() . '"');
-        }
-
-        $this->calendarsToDeleteAtTearDown[] = $calendar->id;
-
-        return $calendar;
-    }
-
     private function deleteAllCalendars()
     {
         $calendarsWithMoreThanOneFollower = [];

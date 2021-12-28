@@ -387,8 +387,9 @@ class Calendar extends Entity
     /**
      * @return void
      * @throws \Exception
+     * @var bool $ignoreDateModifiedDuringEval # needed because tests can update an entity so rapidly that this will fail
      */
-    public function persist()
+    public function persist($ignoreDateModifiedDuringEval = false)
     {
         $result = $this->curl(
             'https://www.addevent.com/api/v1/me/calendars/save/?' . self::arrayToQueryString([
@@ -452,8 +453,11 @@ class Calendar extends Entity
         if($result->calendar->date_create !== $this->getDateCreate() ){
             throw new \Exception('value from persisted calendar not as expected. "date_create" is "' . var_dump($result->calendar->date_create, true) . '" but should be "' . $this->getDateCreate() . '"');
         }
-        if($result->calendar->date_modified === $this->getDateModified() ){
-            throw new \Exception('value from persisted calendar not as expected. "date_modified" is the same value ("' . $this->getDateModified() . '") before and after persist');
+
+        if(!$ignoreDateModifiedDuringEval){
+            if($result->calendar->date_modified === $this->getDateModified() ){
+                throw new \Exception('value from persisted calendar not as expected. "date_modified" is the same value ("' . $this->getDateModified() . '") before and after persist');
+            }
         }
     }
 

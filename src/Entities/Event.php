@@ -633,7 +633,7 @@ class Event extends Entity
             $this->setEnd($this->getEnd()->addSeconds($previousLength));
         }
 
-        var_dump('setStart will set: ' . $newStart->format('m/d/Y') . ' ' . $newStart->format('H:i:s') . ' ' . $newStart->format('A'));
+        // var_dump('setStart will set: ' . $newStart->format('m/d/Y') . ' ' . $newStart->format('H:i:s') . ' ' . $newStart->format('A'));
 
         $this->setDateStart($newStart->format('m/d/Y'));
         $this->setDateStartTime($newStart->format('H:i:s'));

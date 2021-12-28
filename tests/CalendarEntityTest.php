@@ -4,7 +4,6 @@ namespace Railroad\AddEventSdk\Tests;
 
 use Carbon\Carbon;
 use Railroad\AddEventSdk\Entities\Account;
-use Railroad\AddEventSdk\Entities\Calendar;
 
 class CalendarEntityTest extends TestCase
 {
@@ -32,7 +31,7 @@ class CalendarEntityTest extends TestCase
         $calendar->setTitle($titleNew);
         $calendar->setDescription($descriptionNew);
         try{
-            $calendar->persist();
+            $calendar->persist(true);
         }catch(\Exception $exception){
             $this->fail('exception message: ' . $exception->getMessage());
         }

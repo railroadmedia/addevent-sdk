@@ -36,7 +36,7 @@ class AccountEntityTest extends TestCase
     {
         $account = new Account();
         $timezones = $account->getTimezones();
-        $foo = 'bar';
+        $this->assertTrue(count($timezones) > 300);
     }
 
     public function test_does_faker_ever_give_a_timezone_not_used_by_addevent()
