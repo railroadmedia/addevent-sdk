@@ -3,19 +3,20 @@
 namespace Railroad\AddEventSdk\Entities;
 
 use Illuminate\Support\Collection;
-use Railroad\AddEventSdk\Helpers;
 
 class Account extends Entity
 {
+    private $calendars;
+
     /**
-     * @returns Collection|Calendar[]
-     * @throws \Exception
+     * @return bool
      */
-    public function calendars()
+    public function fillCalendars()
     {
         $calendarsRaw = [];
         $calendars = new Collection();
         $allRetrieved = false;
+        $finishedWithoutError = true;
 
         while (!$allRetrieved) {
             $params = ['token' => $this->apiToken];
@@ -26,21 +27,77 @@ class Account extends Entity
                 $url = $pagingNext;
             }
 
-            $result = $this->curl($url);
-            self::ensureProperty($result, 'calendars');
+            try{
+                $result = $this->curl($url);
+                self::ensureProperty($result, 'calendars');
 
-            $pagingNext = $result->paging->next;
-            if (empty($pagingNext)) {
-                $allRetrieved = true;
+                $pagingNext = $result->paging->next;
+                if (empty($pagingNext)) {
+                    $allRetrieved = true;
+                }
+                $calendarsRaw = array_merge($calendarsRaw, $result->calendars);
+            }catch(\Exception $e){
+                error_log($e);
+                $finishedWithoutError = false;
             }
-            $calendarsRaw = array_merge($calendarsRaw, $result->calendars);
         }
 
         foreach($calendarsRaw as $calendarRaw){
-            $calendars->add(new Calendar($calendarRaw));
+            $calendars->push(new Calendar($calendarRaw));
         }
 
-        return $calendars;
+        $this->calendars = $calendars;
+
+        return $finishedWithoutError;
+    }
+
+
+    /**
+     * @returns Collection|Calendar[]
+     * @throws \Exception
+     */
+    public function getCalendars()
+    {
+        if(empty($this->calendars)){
+            try{
+                $success = $this->fillCalendars();
+                if(!$success){
+                    return false;
+                }
+            }catch(\Exception $e){
+                error_log($e);
+                return false;
+            }
+        }
+        return $this->calendars;
+    }
+
+    public function getCalendarById($calendarId)
+    {
+        $calendars = $this->getCalendars();
+
+        /** @var Calendar $calendarCandidate */
+        foreach($calendars as $calendarCandidate){
+            if($calendarCandidate->getId() === $calendarId){
+                return $calendarCandidate;
+            }
+        }
+
+        return false;
+    }
+
+    public function getCalendarByName($name)
+    {
+        $calendars = $this->getCalendars();
+
+        /** @var Calendar $calendarCandidate */
+        foreach($calendars as $calendarCandidate){
+            if($calendarCandidate->getTitle() === $name){
+                return $calendarCandidate;
+            }
+        }
+
+        return false;
     }
 
     /**

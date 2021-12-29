@@ -2,6 +2,7 @@
 
 namespace Railroad\AddEventSdk\Entities;
 
+use App\ValueObjects\AddEventCalendarEventVO;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -26,6 +27,10 @@ class Calendar extends Entity
     private $linkLong;
     private $dateCreate;
     private $dateModified;
+
+    private $events;
+
+    public static $timezoneDefault = 'America/Vancouver';
 
 //    private static $propertiesMap = [
 //        'id' => 'id',
@@ -496,13 +501,27 @@ class Calendar extends Entity
         $this->setDateModified(null);
     }
 
+    public function getEvents()
+    {
+        if(!$this->events){
+            try{
+                $this->fillEvents();
+            }catch(\Exception $e){
+                error_log($e);
+                return false;
+            }
+        }
+
+        return $this->events;
+    }
+
     /**
-     * @return Collection|Event[]
+     * @return bool
      * @throws \Exception
      *
      * Note: there are more query params available in AddEvent's API. Specifically "order_by", "month", "year" and "upcoming"
      */
-    public function events()
+    public function fillEvents()
     {
         $results = [];
         $allRetrieved = false;
@@ -536,30 +555,44 @@ class Calendar extends Entity
             $events->add($event);
         }
 
-        return $events;
+        $this->events = $events;
+
+        return true;
+    }
+
+    public function createEventFromVo(AddEventCalendarEventVO $vo, $organizer, $organizerEmail)
+    {
+        $this->createEvent(
+            $vo->getInternalContentTitle(),
+            $vo->getInternalContentStartTime(),
+            $vo->getInternalContentEndTime(),
+            self::$timezoneDefault,
+            $vo->getInternalContentDescription(),
+            $organizer,
+            $organizerEmail
+        );
     }
 
     /**
-     * @param $calendarId
      * @param $title
      * @param Carbon $startDate
+     * @param Carbon|null $endDate
      * @param string $timezone
      * @param null $description
-     * @param bool $allDayEvent
      * @param null $organizer
      * @param null $organizerEmail
      * @param null $location
      * @param null $reminder
-     * @param Carbon $endDate
+     * @param bool $allDayEvent
      * @param bool $throwExceptionOnFailure
      * @return mixed
      * @throws \Exception
      */
     public function createEvent(
         string $title,
-        string $timezone,
         Carbon $startDate,
-        Carbon $endDate = null,
+        $endDate = null,
+        string $timezone = null,
         $description = null,
         $organizer = null,
         $organizerEmail = null,
@@ -575,11 +608,11 @@ class Calendar extends Entity
         }
 
         $params = [
-            'token' => $this->apiToken,      // required
-            'calendar_id' => $this->getId(),   // required
-            'title' => $title,              // required
-            'timezone' => $timezone,        // required
-            'start_date' => $startDateFormatted,     // required
+            'token' => $this->apiToken,                         // required
+            'calendar_id' => $this->getId(),                    // required
+            'title' => $title,                                  // required
+            'timezone' => $timezone ?? self::$timezoneDefault,  // required
+            'start_date' => $startDateFormatted,                // required
             'description' => $description,
             'end_date' => $endDate,
             'organizer' => $organizer,
