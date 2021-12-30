@@ -78,7 +78,7 @@ class Account extends Entity
 
         /** @var Calendar $calendarCandidate */
         foreach($calendars as $calendarCandidate){
-            if($calendarCandidate->getId() === $calendarId){
+            if($calendarCandidate->getId() == $calendarId){
                 return $calendarCandidate;
             }
         }

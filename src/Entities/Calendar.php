@@ -501,6 +501,22 @@ class Calendar extends Entity
         $this->setDateModified(null);
     }
 
+    public function getEventById($eventId)
+    {
+        $events = $this->getEvents();
+
+        if($events){
+            /** @var Event $event */
+            foreach($events as $event){
+                if($event->getId() == $eventId){
+                    return $event;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function getEvents()
     {
         if(!$this->events){
@@ -552,7 +568,7 @@ class Calendar extends Entity
 
         foreach($results as $eventRaw){
             $event = new Event($eventRaw);
-            $events->add($event);
+            $events->push($event);
         }
 
         $this->events = $events;
@@ -562,15 +578,17 @@ class Calendar extends Entity
 
     public function createEventFromVo(AddEventCalendarEventVO $vo, $organizer, $organizerEmail)
     {
-        $this->createEvent(
+        $event = $this->createEvent(
             $vo->getInternalContentTitle(),
-            $vo->getInternalContentStartTime(),
-            $vo->getInternalContentEndTime(),
+            Carbon::parse($vo->getInternalContentStartTime()),
+            Carbon::parse($vo->getInternalContentEndTime()),
             self::$timezoneDefault,
-            $vo->getInternalContentDescription(),
+            $vo->formattedDescription(),
             $organizer,
             $organizerEmail
         );
+
+        return $event;
     }
 
     /**
@@ -633,11 +651,11 @@ class Calendar extends Entity
         $event = $result->event;
 
         if ($throwExceptionOnFailure) {
-            $matchingCalendarIds = $event->calendar === $this->getId();
+            $matchingCalendarIds = $event->calendar == $this->getId();
             $matchingDescriptions = self::stringsSameIfFormattingRemoved($description, $event->description);
             $matchingTitles = self::stringsSameIfFormattingRemoved($title, $event->title);
-            $eventWasSetAsAllDayEvent = $event->all_day_event === 'true';
-            $matchingAllDayEventSettings = $eventWasSetAsAllDayEvent === $allDayEvent;
+            $eventWasSetAsAllDayEvent = $event->all_day_event == 'true';
+            $matchingAllDayEventSettings = $eventWasSetAsAllDayEvent == $allDayEvent;
 
             $startDateObj = Carbon::parse($startDateFormatted, $timezone);
 

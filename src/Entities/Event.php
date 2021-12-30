@@ -2,7 +2,9 @@
 
 namespace Railroad\AddEventSdk\Entities;
 
+use App\ValueObjects\AddEventCalendarEventVO;
 use Carbon\Carbon;
+use DateTimeZone;
 
 class Event extends Entity
 {
@@ -441,10 +443,22 @@ class Event extends Entity
     }
 
     /**
-     * @param string $timezone
+     * @param DateTimeZone|string $timezone
+     * @return string
      */
     public function setTimezone($timezone): void
     {
+        if(is_object($timezone)){
+
+            $class = get_class($timezone);
+
+            if($class === DateTimeZone::class){
+                /** @var DateTimeZone $timezone */
+                $timezone = $timezone->getName();
+            }
+        }
+
+        /** @var string timezone */
         $this->timezone = $timezone;
     }
 
@@ -665,6 +679,22 @@ class Event extends Entity
         $this->setDateEndTime($newEnd->format('H:i:s'));
         $this->setDateEndAmPm($newEnd->format('A'));
         $this->setTimezone($newEnd->getTimezone());
+    }
+
+    public function updateFromVo(AddEventCalendarEventVO $vo, $organizer, $organizerEmail, $persist = true)
+    {
+        $this->setTitle($vo->getInternalContentTitle());
+        $this->setStart(Carbon::parse($vo->getInternalContentStartTime()));
+        $this->setEnd(Carbon::parse($vo->getInternalContentEndTime()));
+        $this->setDescription($vo->formattedDescription());
+        $this->setOrganizer($organizer);
+        $this->setOrganizerEmail($organizerEmail);
+
+        if($persist){
+            $this->persist();
+        }
+
+        return true;
     }
 
     public function persist()
