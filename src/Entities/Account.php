@@ -90,10 +90,12 @@ class Account extends Entity
     {
         $calendars = $this->getCalendars();
 
-        /** @var Calendar $calendarCandidate */
-        foreach($calendars as $calendarCandidate){
-            if($calendarCandidate->getTitle() === $name){
-                return $calendarCandidate;
+        if($calendars){
+            /** @var Calendar $calendarCandidate */
+            foreach($calendars as $calendarCandidate){
+                if($calendarCandidate->getTitle() === $name){
+                    return $calendarCandidate;
+                }
             }
         }
 

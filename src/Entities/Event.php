@@ -36,7 +36,7 @@ class Event extends Entity
     private $dateCreate;
     private $dateModified;
 
-    public function __construct($stdClassObj)
+    public function __construct($stdClassObj, $calendarId)
     {
         parent::__construct();
 
@@ -46,9 +46,7 @@ class Event extends Entity
         }
 
         // example: '1640324918396800',
-        if(isset($stdClassObj->calendar)){
-            $this->setcalendar($stdClassObj->calendar);
-        }
+        $this->setcalendar($calendarId);
 
         // example: 'rl10954490',
         if(isset($stdClassObj->unique)){
@@ -635,27 +633,6 @@ class Event extends Entity
     }
 
     /**
-     * @param Carbon $time
-     * @throws \Exception
-     * @return void
-     */
-    public function setStart(Carbon $newStart)
-    {
-        $newStartIsAfterCurrentEnd = $newStart->gt($this->getEnd());
-        if($newStartIsAfterCurrentEnd){
-            $previousLength = $this->getStart()->diffInSeconds($this->getEnd());
-            $this->setEnd($this->getEnd()->addSeconds($previousLength));
-        }
-
-        // var_dump('setStart will set: ' . $newStart->format('m/d/Y') . ' ' . $newStart->format('H:i:s') . ' ' . $newStart->format('A'));
-
-        $this->setDateStart($newStart->format('m/d/Y'));
-        $this->setDateStartTime($newStart->format('H:i:s'));
-        $this->setDateStartAmPm($newStart->format('A'));
-        $this->setTimezone($newStart->getTimezone());
-    }
-
-    /**
      * @return Carbon|false
      */
     public function getEnd()
@@ -664,28 +641,44 @@ class Event extends Entity
         return Carbon::createFromFormat('m/d/Y H:i:s A', $concat, $this->getTimezone());
     }
 
-    /**
-     * @param Carbon $time
-     * @throws \Exception
-     * @return void
-     */
-    public function setEnd(Carbon $newEnd)
+    public function setStartAndEnd(Carbon $start, ?Carbon $end)
     {
-        if($newEnd->lt($this->getStart())){
+        if($end === null){
+            $end = $start->copy()->addHour();
+        }
+
+        if(!empty($this->getStart()) && !empty($this->getEnd())){
+            $newStartIsAfterCurrentEnd = $start->gt($this->getEnd());
+            if($newStartIsAfterCurrentEnd){
+                $previousLength = $this->getStart()->diffInSeconds($this->getEnd());
+                $end->addSeconds($previousLength);
+            }
+        }
+
+        $this->setDateStart($start->format('m/d/Y'));
+        $this->setDateStartTime($start->format('H:i:s'));
+        $this->setDateStartAmPm($start->format('A'));
+        $this->setTimezone($start->getTimezone());
+
+        if($end->lt($start)){
             throw new \Exception('Cannot set new end that is time before start');
         }
 
-        $this->setDateEnd($newEnd->format('m/d/Y'));
-        $this->setDateEndTime($newEnd->format('H:i:s'));
-        $this->setDateEndAmPm($newEnd->format('A'));
-        $this->setTimezone($newEnd->getTimezone());
+        $this->setDateEnd($end->format('m/d/Y'));
+        $this->setDateEndTime($end->format('H:i:s'));
+        $this->setDateEndAmPm($end->format('A'));
+        $this->setTimezone($end->getTimezone());
     }
 
     public function updateFromVo(AddEventCalendarEventVO $vo, $organizer, $organizerEmail, $persist = true)
     {
+        $startTime = Carbon::parse($vo->getInternalContentStartTime(), Calendar::$timezoneDefault);
+        $endTime = $vo->getInternalContentEndTime() ? Carbon::parse(
+            $vo->getInternalContentEndTime()
+        ) : $vo->getInternalContentEndTime();
+
         $this->setTitle($vo->getInternalContentTitle());
-        $this->setStart(Carbon::parse($vo->getInternalContentStartTime()));
-        $this->setEnd(Carbon::parse($vo->getInternalContentEndTime()));
+        $this->setStartAndEnd($startTime, $endTime);
         $this->setDescription($vo->formattedDescription());
         $this->setOrganizer($organizer);
         $this->setOrganizerEmail($organizerEmail);
@@ -720,8 +713,8 @@ class Event extends Entity
         $result = $this->curl(
             'https://www.addevent.com/api/v1/me/calendars/events/save/?' . self::arrayToQueryString($params)
         );
-        
-        $copy = new Event($result->event);
+
+        $copy = new Event($result->event, $this->getCalendar());
 
         if($this->getId() !== $copy->getId()){
             throw new \Exception('value from persisted event not as expected.');

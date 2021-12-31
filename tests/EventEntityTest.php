@@ -74,7 +74,7 @@ class EventEntityTest extends TestCase
         );
 
         $event->setTitle($eventTitleNew);
-        $event->setStart($eventStartTimeNew);
+        $event->setStart($eventStartTimeNew); // todo update, replace with setStartAndEnd()
         $event->persist();
 
         /** @var Event $eventPulledFreshlyAfterPersist */

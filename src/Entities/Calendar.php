@@ -30,7 +30,7 @@ class Calendar extends Entity
 
     private $events;
 
-    public static $timezoneDefault = 'America/Vancouver';
+    public static $timezoneDefault = 'UTC';
 
 //    private static $propertiesMap = [
 //        'id' => 'id',
@@ -567,7 +567,7 @@ class Calendar extends Entity
         $events = new Collection();
 
         foreach($results as $eventRaw){
-            $event = new Event($eventRaw);
+            $event = new Event($eventRaw, $this->getId());
             $events->push($event);
         }
 
@@ -578,11 +578,13 @@ class Calendar extends Entity
 
     public function createEventFromVo(AddEventCalendarEventVO $vo, $organizer, $organizerEmail)
     {
+        $startTime = Carbon::parse($vo->getInternalContentStartTime(), self::$timezoneDefault);
+        $endTime = $vo->getInternalContentEndTime() ? Carbon::parse($vo->getInternalContentEndTime(), self::$timezoneDefault) : null;
+
         $event = $this->createEvent(
             $vo->getInternalContentTitle(),
-            Carbon::parse($vo->getInternalContentStartTime()),
-            Carbon::parse($vo->getInternalContentEndTime()),
-            self::$timezoneDefault,
+            $startTime,
+            $endTime,
             $vo->formattedDescription(),
             $organizer,
             $organizerEmail
@@ -609,8 +611,7 @@ class Calendar extends Entity
     public function createEvent(
         string $title,
         Carbon $startDate,
-        $endDate = null,
-        string $timezone = null,
+        ?Carbon $endDate = null,
         $description = null,
         $organizer = null,
         $organizerEmail = null,
@@ -626,11 +627,11 @@ class Calendar extends Entity
         }
 
         $params = [
-            'token' => $this->apiToken,                         // required
-            'calendar_id' => $this->getId(),                    // required
-            'title' => $title,                                  // required
-            'timezone' => $timezone ?? self::$timezoneDefault,  // required
-            'start_date' => $startDateFormatted,                // required
+            'token' => $this->apiToken,             // required
+            'calendar_id' => $this->getId(),        // required
+            'title' => $title,                      // required
+            'timezone' => self::$timezoneDefault,   // required
+            'start_date' => $startDateFormatted,    // required
             'description' => $description,
             'end_date' => $endDate,
             'organizer' => $organizer,
@@ -657,7 +658,7 @@ class Calendar extends Entity
             $eventWasSetAsAllDayEvent = $event->all_day_event == 'true';
             $matchingAllDayEventSettings = $eventWasSetAsAllDayEvent == $allDayEvent;
 
-            $startDateObj = Carbon::parse($startDateFormatted, $timezone);
+            $startDateObj = Carbon::parse($startDateFormatted);
 
             $matchingStartTimes = self::timesMatch($event, $startDateObj, $endDate);
 
@@ -676,6 +677,6 @@ class Calendar extends Entity
             }
         }
 
-        return new Event($event);
+        return new Event($event, $this->getId());
     }
 }
