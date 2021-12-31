@@ -36,6 +36,8 @@ class Event extends Entity
     private $dateCreate;
     private $dateModified;
 
+    public static $customDataSyncIdKey = 'sync_id';
+
     public function __construct($stdClassObj, $calendarId)
     {
         parent::__construct();
@@ -145,7 +147,7 @@ class Event extends Entity
 
         // example: '',
         if(isset($stdClassObj->custom_data)){
-            $this->setCustomData($stdClassObj->custom_data);
+            $this->setCustomData(json_decode($stdClassObj->custom_data));
         }
 
         // example: '0',
@@ -525,15 +527,15 @@ class Event extends Entity
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getCustomData()
+    public function getCustomData() : array
     {
         return $this->customData;
     }
 
     /**
-     * @param string $customData
+     * @param array $customData
      */
     public function setCustomData($customData): void
     {
@@ -668,26 +670,6 @@ class Event extends Entity
         $this->setDateEndTime($end->format('H:i:s'));
         $this->setDateEndAmPm($end->format('A'));
         $this->setTimezone($end->getTimezone());
-    }
-
-    public function updateFromVo(AddEventCalendarEventVO $vo, $organizer, $organizerEmail, $persist = true)
-    {
-        $startTime = Carbon::parse($vo->getInternalContentStartTime(), Calendar::$timezoneDefault);
-        $endTime = $vo->getInternalContentEndTime() ? Carbon::parse(
-            $vo->getInternalContentEndTime()
-        ) : $vo->getInternalContentEndTime();
-
-        $this->setTitle($vo->getInternalContentTitle());
-        $this->setStartAndEnd($startTime, $endTime);
-        $this->setDescription($vo->formattedDescription());
-        $this->setOrganizer($organizer);
-        $this->setOrganizerEmail($organizerEmail);
-
-        if($persist){
-            $this->persist();
-        }
-
-        return true;
     }
 
     public function persist()

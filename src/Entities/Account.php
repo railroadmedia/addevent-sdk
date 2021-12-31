@@ -9,14 +9,13 @@ class Account extends Entity
     private $calendars;
 
     /**
-     * @return bool
+     * @return void
      */
-    public function fillCalendars()
+    public function fillCalendars() : void
     {
         $calendarsRaw = [];
         $calendars = new Collection();
         $allRetrieved = false;
-        $finishedWithoutError = true;
 
         while (!$allRetrieved) {
             $params = ['token' => $this->apiToken];
@@ -27,19 +26,14 @@ class Account extends Entity
                 $url = $pagingNext;
             }
 
-            try{
-                $result = $this->curl($url);
-                self::ensureProperty($result, 'calendars');
+            $result = $this->curl($url);
+            self::ensureProperty($result, 'calendars');
 
-                $pagingNext = $result->paging->next;
-                if (empty($pagingNext)) {
-                    $allRetrieved = true;
-                }
-                $calendarsRaw = array_merge($calendarsRaw, $result->calendars);
-            }catch(\Exception $e){
-                error_log($e);
-                $finishedWithoutError = false;
+            $pagingNext = $result->paging->next;
+            if (empty($pagingNext)) {
+                $allRetrieved = true;
             }
+            $calendarsRaw = array_merge($calendarsRaw, $result->calendars);
         }
 
         foreach($calendarsRaw as $calendarRaw){
@@ -47,8 +41,6 @@ class Account extends Entity
         }
 
         $this->calendars = $calendars;
-
-        return $finishedWithoutError;
     }
 
 
@@ -59,15 +51,7 @@ class Account extends Entity
     public function getCalendars()
     {
         if(empty($this->calendars)){
-            try{
-                $success = $this->fillCalendars();
-                if(!$success){
-                    return false;
-                }
-            }catch(\Exception $e){
-                error_log($e);
-                return false;
-            }
+            $this->fillCalendars();
         }
         return $this->calendars;
     }

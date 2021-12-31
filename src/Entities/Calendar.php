@@ -31,6 +31,7 @@ class Calendar extends Entity
     private $events;
 
     public static $timezoneDefault = 'UTC';
+    public static $customDataSyncIdKey = 'sync_id';
 
 //    private static $propertiesMap = [
 //        'id' => 'id',
@@ -576,33 +577,17 @@ class Calendar extends Entity
         return true;
     }
 
-    public function createEventFromVo(AddEventCalendarEventVO $vo, $organizer, $organizerEmail)
-    {
-        $startTime = Carbon::parse($vo->getInternalContentStartTime(), self::$timezoneDefault);
-        $endTime = $vo->getInternalContentEndTime() ? Carbon::parse($vo->getInternalContentEndTime(), self::$timezoneDefault) : null;
-
-        $event = $this->createEvent(
-            $vo->getInternalContentTitle(),
-            $startTime,
-            $endTime,
-            $vo->formattedDescription(),
-            $organizer,
-            $organizerEmail
-        );
-
-        return $event;
-    }
-
     /**
      * @param $title
      * @param Carbon $startDate
-     * @param Carbon|null $endDate
-     * @param string $timezone
-     * @param null $description
-     * @param null $organizer
-     * @param null $organizerEmail
-     * @param null $location
-     * @param null $reminder
+     * @param Carbon|mixed $endDate
+     * @param string|null $timezone
+     * @param string $description
+     * @param array $customData
+     * @param string|null $organizer
+     * @param string|null $organizerEmail
+     * @param string|null $location
+     * @param string|null $reminder
      * @param bool $allDayEvent
      * @param bool $throwExceptionOnFailure
      * @return mixed
@@ -613,6 +598,7 @@ class Calendar extends Entity
         Carbon $startDate,
         ?Carbon $endDate = null,
         $description = null,
+        array $customData = [],
         $organizer = null,
         $organizerEmail = null,
         $location = null,
@@ -639,6 +625,7 @@ class Calendar extends Entity
             'location' => $location,
             'reminder' => $reminder,
             'all_day_event' => $allDayEvent,
+            'custom_data' => json_encode($customData)
         ];
 
         $queryString = self::arrayToQueryString($params);
