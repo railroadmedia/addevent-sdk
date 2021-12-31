@@ -531,7 +531,7 @@ class Event extends Entity
      */
     public function getCustomData() : array
     {
-        return $this->customData;
+        return json_decode($this->customData) ?? [];
     }
 
     /**
